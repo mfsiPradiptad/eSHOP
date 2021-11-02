@@ -169,8 +169,5 @@ class AddProductService
             'intTotalAmount' => $totalAmount
         ]);
         $orderId = $order->id;
-
-        dd($order);
-
     }
 }
