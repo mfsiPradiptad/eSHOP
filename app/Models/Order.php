@@ -11,11 +11,10 @@ class Order extends Model
 
     public $table = 'order';
     protected $fillable = [
-        'intOrdersId',
+        'textOrderId',
         'userId',
         'productId',
         'quantity',
-        'address',
         'price',
         'totalAmount',
     ];

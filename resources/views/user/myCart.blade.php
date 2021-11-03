@@ -41,7 +41,7 @@
                     </tr>
                 </tbody>
             </table>
-            <div><a href="/checkOut" class="btn btn-lg text-white bg-warning" id="checkOut_{{$product['id']}}">Check Out</a></div>
+            <div><a href="/checkOut/{{Crypt::encryptString($totalAmount)}}" class="btn btn-lg text-white bg-warning" id="checkOut_{{$product['id']}}">Check Out</a></div>
 
         @else
             <p class="text-center h2 font-weight-bold text-primary col-sm-12">Nothing in cart.</p>

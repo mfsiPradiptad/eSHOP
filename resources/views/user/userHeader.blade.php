@@ -31,7 +31,7 @@
             <ul class="navbar-nav mr-auto">
 
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="#">My Order</a>
+                    <a class="nav-link text-white" href="myOrders">My Order</a>
                   </li>
 
                   <li class="nav-item">

@@ -6,7 +6,7 @@ use App\Models\Product;
 use App\Models\Mycart;
 use App\Models\OrderDetail;
 use App\Models\Order;
-
+use Illuminate\Support\Facades\DB;
 
 class AddProductService
 {
@@ -105,7 +105,7 @@ class AddProductService
         $result = Mycart::where('productId', $productId)
             ->where('userId', $userId)
             ->where('inCart', 1)
-            ->update(['inCart' => 0]);
+            ->delete();
 
         $msg = 'Product remove from cart.';
         return $msg;
@@ -114,9 +114,9 @@ class AddProductService
     public function inMyCart(int $id)
     {
         $result = Mycart::where('userId', $id)
-                        ->where('inCart', 1)
-                        ->rightJoin('product', 'mycart.productId', '=', 'product.id')
-                        ->get();
+            ->where('inCart', 1)
+            ->rightJoin('product', 'mycart.productId', '=', 'product.id')
+            ->get();
 
         $result = json_decode($result, true);
         return $result;
@@ -128,10 +128,9 @@ class AddProductService
         $quntity = $data['quantity'];
         $userId = auth()->user()->id;
         $result = Mycart::where('userId', $userId)
-                        ->where('productId', $id)
-                        ->where('inCart', 1)
-                        ->update(['intQuantity' => $quntity]);
-
+            ->where('productId', $id)
+            ->where('inCart', 1)
+            ->update(['intQuantity' => $quntity]);
     }
 
     public function findInCart(array $data): bool
@@ -147,30 +146,87 @@ class AddProductService
         $result = json_decode($result, true);
 
         if (!empty($result)) {
-            $find =true;
+            $find = true;
         }
 
         return $find;
     }
 
-    public function checkOut(array $data)
+    public function checkOut(array $data): array
     {
+
         $name = trim($data['name']);
         $mobile = trim($data['mobile']);
         $address = trim($data['address']);
         $userId = auth()->user()->id;
-        $totalAmount = (int) $data['totalAmount'];
+        $totalAmount = $data['totalAmount'];
+        $uniQueOrderId = uniqid('ESH');
 
         $order = OrderDetail::create([
+            'textOrderId' => $uniQueOrderId,
             'intUserid' => $userId,
             'orderName' => $name,
             'orderMobile' => $mobile,
             'orderAddress' => $address,
             'intTotalAmount' => $totalAmount
         ]);
-        $orderId = $order->id;
 
-        dd($order);
+        $orderId = $order->textOrderId;
+        $myCart = $this->inMyCart($userId);
+        $cartList = array();
+        $productList = array();
+        $i = 0;
+        $orderPlace = new Order();
 
+        foreach ($myCart as $cart) {
+            $amount = $cart['intQuantity'] * $cart['price'];
+
+            $cartItems = array(
+                'textOrderId' => $orderId,
+                'productId' => $cart['productId'],
+                'userId' => $cart['userId'],
+                'quantity' => $cart['intQuantity'],
+                'price' => $cart['price'],
+                'totalAmount' => $amount
+            );
+            $i++;
+            array_push($cartList, $cartItems);
+            array_push($productList, $cart['productId']);
+
+        }
+        $error = 1;
+
+        try {
+            $orderPlace = Order::insert($cartList);
+            $this->removeFromCartAftChekOut($productList);
+            $error = 0;
+            $msg = " Your order has been placed successfully. ";
+        } catch (\Throwable $th) {
+            $error = 2;
+            $msg = " Error in placing Order. ";
+        }
+
+        $result = array('uniqueId' => $uniQueOrderId,
+                    'error' => $error,
+                    'msg' => $msg
+                );
+        return $result;
+    }
+
+    public function removeFromCartAftChekOut(array $data): void
+    {
+        $result = Mycart::whereIn('productId', $data)
+            ->where('userId', auth()->user()->id)
+            ->where('inCart', 1)
+            ->delete();
+    }
+
+    public function allMyOrders()
+    {
+        $result = OrderDetail::where('orderCancelStatus', 0)
+                             ->where('intUserid', auth()->user()->id)
+                             ->rightJoin('order','orderDetails.textOrderId', '=', 'order.textOrderId')
+                             ->get();
+        dd($result);
     }
 }

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\AddProductService;
+use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Support\Facades\Crypt;
 
 class UserProductController extends Controller
 {
@@ -48,14 +50,21 @@ class UserProductController extends Controller
         return view('user.myCart', ['data' => $result]);
     }
 
-    public function checkOutIndex()
+    public function checkOutIndex($amount = 0)
     {
-        return view('user.checkOut');
+        $amount = (int) Crypt::decryptString($amount);
+        return view('user.checkOut', ['amount' => $amount]);
     }
 
     public function checkOut(Request $request)
     {
         $data = (array) $request->all();
         $result = $this->productService->checkOut($data);
+        return view('user.orderPlace',['data' => $result]);
+    }
+
+    public function allMyOrders()
+    {
+        $this->productService->allMyOrders();
     }
 }

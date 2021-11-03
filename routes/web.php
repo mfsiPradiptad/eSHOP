@@ -50,8 +50,9 @@ Route::middleware(['user'])->group(function () {
     Route::post('/updateCart',[UserProductController::class,'updateCart']);
     Route::post('/removeFromCart',[UserProductController::class,'removeFromCart']);
     Route::get('/myCart',[UserProductController::class,'viewCart']);
-    Route::get('/checkOut',[UserProductController::class,'checkOutIndex']);
+    Route::get('/checkOut/{amount?}',[UserProductController::class,'checkOutIndex']);
     Route::post('/checkOut',[UserProductController::class,'checkOut']);
+    Route::get('/myOrders', [UserProductController::class,'allMyOrders']);
 
 });
 

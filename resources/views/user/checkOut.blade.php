@@ -24,6 +24,7 @@
                 <label for=""></label>
                 <button class="form-control btn btn-warning" onclick="return validator()">Place order</button>
             </div>
+            <input type="hidden" name="totalAmount" value="{{$amount}}">
         </form>
     </div>
 </div>
