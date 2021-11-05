@@ -6,7 +6,6 @@ use App\Models\Product;
 use App\Models\Mycart;
 use App\Models\OrderDetail;
 use App\Models\Order;
-use Illuminate\Support\Facades\DB;
 
 class AddProductService
 {
