@@ -185,7 +185,7 @@ class AddProductService
                 'textOrderId' => $orderId,
                 'productId' => $cart['productId'],
                 'userId' => $cart['userId'],
-                'quantity' => $cart['intQuantity'],
+                'intQuantity' => $cart['intQuantity'],
                 'price' => $cart['price'],
                 'totalAmount' => $amount
             );
@@ -194,6 +194,7 @@ class AddProductService
             array_push($productList, $cart['productId']);
 
         }
+
         $error = 1;
 
         try {
@@ -210,6 +211,7 @@ class AddProductService
                     'error' => $error,
                     'msg' => $msg
                 );
+
         return $result;
     }
 
@@ -221,12 +223,40 @@ class AddProductService
             ->delete();
     }
 
-    public function allMyOrders()
+    public function allMyOrders(): array
     {
-        $result = OrderDetail::where('orderCancelStatus', 0)
-                             ->where('intUserid', auth()->user()->id)
+        $rows = OrderDetail::where('intUserid', auth()->user()->id)
                              ->rightJoin('order','orderDetails.textOrderId', '=', 'order.textOrderId')
+                             ->rightJoin('product', 'order.productId', '=', 'product.id')
+                             ->orderBy('orderDetails.id','DESC')
                              ->get();
-        dd($result);
+
+        $rows =  json_decode($rows,true);
+        $resultKeys = array();
+        $result = array();
+
+        foreach($rows as $row){
+            array_push($resultKeys, $row['textOrderId']);
+        }
+
+        $resultKeys = array_unique($resultKeys);
+        $i = 0;
+
+        foreach($rows as $row){
+            $key =$row['textOrderId'];
+            $result[$key][$i++] = $row;
+        }
+
+        return $result;
+    }
+
+    public function cancelOrder(string $txtOrderId)
+    {
+        $txtOrderId = trim($txtOrderId);
+        $result = OrderDetail::where('textOrderId', $txtOrderId)
+                            ->where('intUserid', auth()->user()->id)
+                            ->where('orderCancelStatus', 0)
+                            ->update(['orderCancelStatus' => 1]);
+
     }
 }

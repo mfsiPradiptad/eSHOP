@@ -14,7 +14,7 @@ class Order extends Model
         'textOrderId',
         'userId',
         'productId',
-        'quantity',
+        'intQuantity',
         'price',
         'totalAmount',
     ];

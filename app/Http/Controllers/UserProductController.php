@@ -65,6 +65,15 @@ class UserProductController extends Controller
 
     public function allMyOrders()
     {
-        $this->productService->allMyOrders();
+        $result = $this->productService->allMyOrders();
+        return view('user.myOrders',['result' => $result]);
+    }
+
+    public function cancelOrder(Request $request)
+    {
+        $txtOrderId = $request->id;
+        $this->productService->cancelOrder($txtOrderId);
+
+
     }
 }

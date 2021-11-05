@@ -26,3 +26,8 @@
        </div>
     </div>
  </div>
+<script>
+    setTimeout(() => {
+        window.location.href ='/home';
+    }, 1000);
+</script>

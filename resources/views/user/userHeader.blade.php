@@ -46,7 +46,7 @@
                       <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                        {{auth()->user()->name}}
                       </a>
-                      <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                      <div class="dropdown-menu bg-dark" aria-labelledby="navbarDropdownMenuLink">
                           <a class="nav-link btn btn-danger" href="/logout">logout</a>
                       </div>
                   </li>

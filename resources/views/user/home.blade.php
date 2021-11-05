@@ -3,7 +3,7 @@
 <html lang="en">
 <body>
     <div class="container">
-        <div class="row d-flex justify-content-center align-items-center">
+        <div class="row d-flex justify-content-center align-items-center bg-light">
             <table class="table table-borderd">
                 <tbody>
                     @foreach ( $data as $product)

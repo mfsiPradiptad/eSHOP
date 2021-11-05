@@ -67,7 +67,7 @@
         var pIdName = $(this).closest('td').find('#productId');
         var pId = pIdName.val();
         updateCart(pId, quantity);
-        window.location.href = '/myCart'
+        window.location.href = '/myCart';
     });
 
 </script>

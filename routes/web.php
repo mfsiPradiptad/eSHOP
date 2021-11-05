@@ -53,6 +53,7 @@ Route::middleware(['user'])->group(function () {
     Route::get('/checkOut/{amount?}',[UserProductController::class,'checkOutIndex']);
     Route::post('/checkOut',[UserProductController::class,'checkOut']);
     Route::get('/myOrders', [UserProductController::class,'allMyOrders']);
+    Route::post('/cancelOrder',[UserProductController::class, 'cancelOrder']);
 
 });
 
