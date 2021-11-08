@@ -6,8 +6,6 @@ use App\Models\OrderDetail;
 use App\Models\Mycart;
 use App\Models\Product;
 
-
-
 class ProductRepository
 {
     public function getProduct(int $id): array
@@ -106,6 +104,16 @@ class ProductRepository
                             ->rightJoin('product', 'order.productId', '=', 'product.id')
                             ->orderBy('orderDetails.id','DESC')
                             ->get();
+
+        $rows =  json_decode($rows,true);
+        return $rows;
+    }
+
+    public function searchProduct(string $strProduct): array
+    {
+        $rows = Product::where('description', 'like', '%' . $strProduct . '%')
+                        ->orWhere('productName', 'like', '%' . $strProduct . '%')
+                        ->get();
 
         $rows =  json_decode($rows,true);
         return $rows;

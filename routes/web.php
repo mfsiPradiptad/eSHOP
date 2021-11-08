@@ -56,6 +56,8 @@ Route::middleware(['user'])->group(function () {
     Route::post('/checkOut',[UserProductController::class,'checkOut']);
     Route::get('/myOrders', [UserProductController::class,'allMyOrders']);
     Route::post('/cancelOrder',[UserProductController::class, 'cancelOrder']);
+    Route::get('/search/products',[UserProductController::class, 'searchProduct'])->name('search');
+
 
 });
 

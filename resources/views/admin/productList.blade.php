@@ -28,8 +28,8 @@
                 @endphp
                 @foreach ( $data as $product)
                    <tr>
-                    <td>{{$count++}} </td>
-                    <td><img src="{{asset('storage/documents/product/'.$product['image']) }}" alt="image" height="70px" width="100px"></td>
+                    <td> {{$count++}} </td>
+                    <td><img src="{{asset('storage/documents/product/' . $product['image']) }}" alt="image" height="70px" width="100px"></td>
                     <td>{{$product['productName']}} <br> {{$product['description']}} </td>
                     <td>&#8377; {{$product['price']}} <br> {{$product['quantity']}} pcs</td>
                     <td><a href="/addProduct/{{$product['id']}}">Edit</a> </td>

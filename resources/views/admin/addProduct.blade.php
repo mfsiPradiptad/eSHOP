@@ -33,7 +33,7 @@
 
 
                                 <div>
-                                    <img src="{{asset('storage/documents/product/'.$data[0]['image']) }}" alt="image" height="100px" width="100px">
+                                    <img src="{{asset('storage/documents/product/' . $data[0]['image']) }}" alt="image" height="100px" width="100px">
                                 </div>
 
                             @endif

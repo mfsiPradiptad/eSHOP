@@ -244,4 +244,10 @@ class AddProductService
 
         return $result;
     }
+
+    public function searchProduct(string $strProduct): array
+    {
+        $rows = $this->productRepository->searchProduct($strProduct);
+        return $rows;
+    }
 }

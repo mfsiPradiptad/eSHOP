@@ -19,7 +19,7 @@ class UserProductController extends Controller
     public function index()
     {
         $result = $this->productService->getAllProduct();
-        return view('user.home', ['data' => $result]);
+        return view('user.home', ['data' => $result, 'searchProduct' => '']);
     }
 
     public function addToCart(Request $request)
@@ -73,5 +73,12 @@ class UserProductController extends Controller
     {
         $txtOrderId = $request->id;
         $this->productService->cancelOrder($txtOrderId);
+    }
+
+    public function searchProduct(Request $request)
+    {
+        $productName = htmlspecialchars($request->searchProduct);
+        $result = $this->productService->searchProduct($productName);
+        return view('user.home', ['data' => $result, 'searchProduct' => $productName]);
     }
 }

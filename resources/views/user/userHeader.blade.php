@@ -31,7 +31,7 @@
             <ul class="navbar-nav mr-auto">
 
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="myOrders">My Order</a>
+                    <a class="nav-link text-white" href="/myOrders">My Order</a>
                   </li>
 
                   <li class="nav-item">
@@ -46,16 +46,13 @@
                       <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                        {{auth()->user()->name}}
                       </a>
-                      <div class="dropdown-menu bg-dark" aria-labelledby="navbarDropdownMenuLink">
+                      <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                           <a class="nav-link btn btn-danger" href="/logout">logout</a>
                       </div>
                   </li>
+
             </ul>
-            <form class="form-inline my-2 my-lg-0">
-                @csrf
-              <input class="form-control mr-sm-2" type="text" placeholder="Search product" aria-label="Search">
-              <button class="btn btn-outline-success my-2 my-sm-0 text-white btn-success" type="submit">Search </button>
-            </form>
+
         </div>
     </nav>
 
