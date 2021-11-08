@@ -42,6 +42,8 @@ Route::middleware(['admin'])->group(function () {
     Route::get('/productList',[ProductController::class,'product'] )->name('product');
     Route::get('/addProduct/{id?}',[ProductController::class,'productId']);
     Route::post('/uploadProduct',[ProductController::class,'upload']);
+    Route::get('/allOrders/{id}',[ProductController::class,'allOrders']);
+
 });
 
 Route::middleware(['user'])->group(function () {

@@ -40,4 +40,10 @@ class ProductController extends Controller
              'msg' => ''
         ]);
     }
+
+    public function allOrders($id)
+    {
+        $result = $this->productService->allOrders($id);
+        return view('admin.allOrders',['result' => $result, 'id' => $id]);
+    }
 }

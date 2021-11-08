@@ -16,7 +16,8 @@ class OrderDetail extends Model
         'orderName',
         'orderMobile',
         'orderAddress',
-        'intTotalAmount'
+        'intTotalAmount',
+        'orderDeliveryStatus'
     ];
 
 }

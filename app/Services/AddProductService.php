@@ -6,9 +6,17 @@ use App\Models\Product;
 use App\Models\Mycart;
 use App\Models\OrderDetail;
 use App\Models\Order;
+use App\Repositories\ProductRepository;
 
 class AddProductService
 {
+    private $productRepository;
+
+    public function __construct()
+    {
+        $this->productRepository = new ProductRepository();
+    }
+
     public function uploadProduct(array $data): array
     {
         $id = $data['id'];
@@ -25,6 +33,7 @@ class AddProductService
                 'description' =>  $data['pDesc'],
                 'image' => $newName,
             ]);
+
             $msg = 'Product updated sucessfully';
         } else {
             $product = Product::create([
@@ -34,6 +43,8 @@ class AddProductService
                 'description' =>  $data['pDesc'],
                 'image' => $newName,
             ]);
+
+            $id = $product->id;
             $msg = 'Product added sucessfully';
         }
 
@@ -42,9 +53,7 @@ class AddProductService
             $newName
         );
 
-        $product = Product::where('id', $id)->get();
-        $product = json_decode($product, true);
-        $product[0]['submit'] = 'Update';
+        $product = $this->getProduct($id);
         $result = array('product' => $product, 'msg' => $msg);
         return $result;
     }
@@ -52,8 +61,7 @@ class AddProductService
     public function getProduct($id): array
     {
         if ($id != '') {
-            $product = Product::where('id', $id)->get();
-            $product = json_decode($product, true);
+            $product = $this->productRepository->getProduct($id);
             $product[0]['submit'] = 'Update';
         } else {
             $product = array();
@@ -65,13 +73,13 @@ class AddProductService
             $product[0]['productName'] = '';
             $product[0]['submit'] = 'Add';
         }
+
         return $product;
     }
 
     public function getAllProduct(): array
     {
-        $data = Product::get();
-        $data = json_decode($data, true);
+        $data = $this->productRepository->getAllProduct();
         return $data;
     }
 
@@ -88,6 +96,7 @@ class AddProductService
                 'userId' => $userId,
                 'inCart' => 1
             ]);
+
             $result = json_decode($result, true);
             $msg = 'Product added to cart.';
         } else {
@@ -99,50 +108,27 @@ class AddProductService
 
     public function removeFromCart(array $data): string
     {
-        $productId = (int) $data['productId'];
-        $userId = (int) $data['userId'];
-        $result = Mycart::where('productId', $productId)
-            ->where('userId', $userId)
-            ->where('inCart', 1)
-            ->delete();
-
+        $result = $this->productRepository->removeFromCart($data);
         $msg = 'Product remove from cart.';
         return $msg;
     }
 
     public function inMyCart(int $id)
     {
-        $result = Mycart::where('userId', $id)
-            ->where('inCart', 1)
-            ->rightJoin('product', 'mycart.productId', '=', 'product.id')
-            ->get();
-
-        $result = json_decode($result, true);
+        $result = $this->productRepository->inMyCart($id);
         return $result;
     }
 
     public function updateCart(array $data): void
     {
-        $id = $data['productId'];
-        $quntity = $data['quantity'];
         $userId = auth()->user()->id;
-        $result = Mycart::where('userId', $userId)
-            ->where('productId', $id)
-            ->where('inCart', 1)
-            ->update(['intQuantity' => $quntity]);
+        $this->productRepository->updateCart($data, $userId);
     }
 
     public function findInCart(array $data): bool
     {
         $find = false;
-        $productId = (int) $data['productId'];
-        $userId = (int) $data['userId'];
-        $result = Mycart::where('productId', $productId)
-            ->where('userId', $userId)
-            ->where('inCart', 1)
-            ->get();
-
-        $result = json_decode($result, true);
+        $result = $this->productRepository->findInCart($data);
 
         if (!empty($result)) {
             $find = true;
@@ -179,7 +165,6 @@ class AddProductService
 
         foreach ($myCart as $cart) {
             $amount = $cart['intQuantity'] * $cart['price'];
-
             $cartItems = array(
                 'textOrderId' => $orderId,
                 'productId' => $cart['productId'],
@@ -188,6 +173,7 @@ class AddProductService
                 'price' => $cart['price'],
                 'totalAmount' => $amount
             );
+
             $i++;
             array_push($cartList, $cartItems);
             array_push($productList, $cart['productId']);
@@ -216,21 +202,31 @@ class AddProductService
 
     public function removeFromCartAftChekOut(array $data): void
     {
-        $result = Mycart::whereIn('productId', $data)
-            ->where('userId', auth()->user()->id)
-            ->where('inCart', 1)
-            ->delete();
+        $this->productRepository->removeFromCartAftChekOut($data);
     }
 
     public function allMyOrders(): array
     {
-        $rows = OrderDetail::where('intUserid', auth()->user()->id)
-                             ->rightJoin('order','orderDetails.textOrderId', '=', 'order.textOrderId')
-                             ->rightJoin('product', 'order.productId', '=', 'product.id')
-                             ->orderBy('orderDetails.id','DESC')
-                             ->get();
+        $rows = $this->productRepository->allMyOrders();
+        $result = $this->groupOrders($rows);
+        return $result;
+    }
 
-        $rows =  json_decode($rows,true);
+    public function cancelOrder(string $txtOrderId)
+    {
+        $txtOrderId = trim($txtOrderId);
+        $this->productRepository->cancelOrder($txtOrderId);
+    }
+
+    public function allOrders($id): array
+    {
+        $rows = $this->productRepository->allOrders($id);
+        $result = $this->groupOrders($rows);
+        return $result;
+    }
+
+    public function groupOrders(array $rows): array
+    {
         $resultKeys = array();
         $result = array();
 
@@ -247,15 +243,5 @@ class AddProductService
         }
 
         return $result;
-    }
-
-    public function cancelOrder(string $txtOrderId)
-    {
-        $txtOrderId = trim($txtOrderId);
-        $result = OrderDetail::where('textOrderId', $txtOrderId)
-                            ->where('intUserid', auth()->user()->id)
-                            ->where('orderCancelStatus', 0)
-                            ->update(['orderCancelStatus' => 1]);
-
     }
 }

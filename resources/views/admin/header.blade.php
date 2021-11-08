@@ -28,9 +28,15 @@
 
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                <a class="nav-link text-light" href="/productList">Home
-                    <span class="sr-only">(current)</span>
-                </a>
+                    <li class="nav-item dropdown text-light">
+                        <a class="nav-link dropdown-toggle text-light" id="navbarDropdownMenuLink" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">Orders</a>
+                        <div class="dropdown-menu dropdown-primary" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item text-primary" href="/allOrders/0">Placed Orders</a>
+                            <a class="dropdown-item text-primary" href="/allOrders/1">Cancelled Orders</a>
+                        </div>
+
+                    </li>
                 </li>
                 <li class="nav-item">
                 <a class="nav-link text-light" href="/addProduct">Add Product</a>

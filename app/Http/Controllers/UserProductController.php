@@ -73,7 +73,5 @@ class UserProductController extends Controller
     {
         $txtOrderId = $request->id;
         $this->productService->cancelOrder($txtOrderId);
-
-
     }
 }
