@@ -8,7 +8,7 @@
             <form class="pt-1" action="{{ route('search') }}" method="get" id="searchForm">
                 <p>
 
-                    <input type="text" name="searchProduct" id="searchProduct" value="{{ $searchProduct ?? '' }}" placeholder="Search product">
+                    <input type="text" name="searchProduct" id="searchProduct" value="{{ $searchFilters['productName'] }}" placeholder="Search product">
 
                     <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-filter" viewBox="0 0 16 16">
@@ -26,22 +26,12 @@
                             <div class="form-group">
                                 <label for="selectCat">Category</label>
                                 <select class="form-control bg-white" id="selectCat" name="selectCat">
-                                  <option value="0"> Select </option>
-                                  <option value="5">Pant</option>
-                                  <option value="6">Shirt</option>
-                                  <option value="7">Sarees</option>
-                                  <option value="8">Dresses</option>
                                 </select>
                             </div>
 
                             <div class="form-group">
                                 <label for="selectFor">For</label>
                                 <select class="form-control bg-white" id="selectFor" name="selectFor">
-                                  <option value="0"> Select </option>
-                                  <option value="1">Men</option>
-                                  <option value="2">Women</option>
-                                  <option value="3">Boys</option>
-                                  <option value="4">Girls</option>
                                 </select>
                               </div>
 
@@ -50,41 +40,51 @@
                     </div>
                 </form>
 
+
             <table class="table table-borderd">
                 <tbody>
-                    @foreach ( $data as $product)
-                       <tr>
-                        <td><img src="{{asset('storage/documents/product/'.$product['image']) }}" alt="image" height="100px" width="100px"></td>
-                        <td>
-                            <span class="text-primary font-weight-bold">{{$product['productName']}}</span> <br>
-                            {{$product['description']}} <br>
-                            &#x20B9; {{$product['price']}}
-                        </td>
+                    @if (! empty($data))
+                        @foreach ( $data as $product)
+                        <tr>
+                            <td><img src="{{asset('storage/documents/product/'.$product['image']) }}" alt="image" height="100px" width="100px"></td>
+                            <td>
+                                <span class="text-primary font-weight-bold">{{$product['productName']}}</span> <br>
+                                {{$product['description']}} <br>
+                                &#x20B9; {{$product['price']}}
+                            </td>
 
-                        <td>
-                             @if($product['quantity'] > 0)
-                             <span class="text-success">Available</span> <br> <button class="btn btn-sm productCart text-light bg-success" id="product_{{$product['id']}}"><span id="cartText_{{$product['id']}}">Add to cart</span> </button>
-                             <div>
-                                 <a href="/myCart" class="btn btn-sm text-white bg-warning" style="display: none;" id="checkOut_{{$product['id']}}">Go to cart</a>
-                             </div>
-                             <div>
-                                 <button class="btn removeFromCart btn-sm text-white bg-danger" id="removeCart_{{$product['id']}}" style="display: none;">remove</button>
-                             </div>
+                            <td>
+                                @if($product['quantity'] > 0)
+                                <span class="text-success">Available</span> <br> <button class="btn btn-sm productCart text-light bg-success" id="product_{{$product['id']}}"><span id="cartText_{{$product['id']}}">Add to cart</span> </button>
+                                <div>
+                                    <a href="/myCart" class="btn btn-sm text-white bg-warning" style="display: none;" id="checkOut_{{$product['id']}}">Go to cart</a>
+                                </div>
+                                <div>
+                                    <button class="btn removeFromCart btn-sm text-white bg-danger" id="removeCart_{{$product['id']}}" style="display: none;">remove</button>
+                                </div>
 
 
-                             @else
-                             <span class="text-danger">Out of stock</span>
-                              @endif
-                              <input type="hidden" id="productId" name="productId" value="{{$product['id']}}">
-                        </td>
-                    </tr>
-                    @endforeach
+                                @else
+                                <span class="text-danger">Out of stock</span>
+                                @endif
+                                <input type="hidden" id="productId" name="productId" value="{{$product['id']}}">
+                            </td>
+                        </tr>
+                        @endforeach
+                    @else
+                        <tr colspan="4" class="text-center"><td><p> Could not find products. </p></td></tr>
+                    @endif
                 </tbody>
               </table>
+
         </div>
+
     </div>
 </body>
 <script>
+
+    fillAnxure(1, 'selectCat', {{ $searchFilters['selectCat'] }});
+    fillAnxure(2, 'selectFor', {{ $searchFilters['selectFor'] }});
 
     $('.productCart').click(function(){
         var pIdName = $(this).closest('td').find('#productId');

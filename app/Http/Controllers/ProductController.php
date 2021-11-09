@@ -34,16 +34,20 @@ class ProductController extends Controller
     public function productId($id = '')
     {
         $product = $this->productService->getProduct($id);
-        return view('admin.addProduct',
-        [
-            'data' => $product,
-             'msg' => ''
-        ]);
+        return view('admin.addProduct', ['data' => $product,'msg' => '']);
     }
 
     public function allOrders($id)
     {
         $result = $this->productService->allOrders($id);
         return view('admin.allOrders',['result' => $result, 'id' => $id]);
+    }
+
+    public function fillAnxure(Request $request)
+    {
+        $intAnxId = $request->inAnxId;
+        $value = $request->value;
+        $html = $this->productService->fillAnxure($intAnxId, $value);
+        return json_encode(array('html' => $html));
     }
 }

@@ -24,6 +24,7 @@ class UserController extends Controller
         $dto = $this->loginService->login($data);
 
         if ($dto['error'] == 0) {
+
             if ($dto['role'] == 1) {
                 return redirect('/productList');
             } else {
@@ -39,7 +40,6 @@ class UserController extends Controller
     {
         $data = (array) $request->all();
         $msg = $this->loginService->signUpUser($data);
-
         return view('user.register', ['msg' => $msg]);
     }
 
@@ -48,6 +48,5 @@ class UserController extends Controller
     {
         Auth::logout();
         return redirect('/home');
-
     }
 }

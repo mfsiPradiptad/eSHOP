@@ -20,10 +20,8 @@ class Admin
     {
         if (Auth::check()) {
             if (Auth::user() && Auth::user()->role == '1') {
-
                 return $next($request);
-
-              }
+            }
         }
 
         return redirect('/login');

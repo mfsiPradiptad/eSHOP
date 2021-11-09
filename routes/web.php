@@ -38,15 +38,16 @@ Route::get('/signup', function () {
 Route::post('/login',[UserController::class,'login'])->name('login');
 Route::get('/logout',[UserController::class,'logOut']);
 
-Route::middleware(['admin'])->group(function () {
+Route::middleware(['admin', 'prevent-back'])->group(function () {
     Route::get('/productList',[ProductController::class,'product'] )->name('product');
     Route::get('/addProduct/{id?}',[ProductController::class,'productId']);
     Route::post('/uploadProduct',[ProductController::class,'upload']);
     Route::get('/allOrders/{id}',[ProductController::class,'allOrders']);
 
+
 });
 
-Route::middleware(['user'])->group(function () {
+Route::middleware(['user', 'prevent-back'])->group(function () {
     Route::get('/home',[UserProductController::class,'index']);
     Route::post('/addToCart',[UserProductController::class,'addToCart']);
     Route::post('/updateCart',[UserProductController::class,'updateCart']);
@@ -58,8 +59,8 @@ Route::middleware(['user'])->group(function () {
     Route::post('/cancelOrder',[UserProductController::class, 'cancelOrder']);
     Route::get('/search/products',[UserProductController::class, 'searchProduct'])->name('search');
 
-
 });
 
+Route::post('/fillAnxure',[ProductController::class,'fillAnxure']);
 
 

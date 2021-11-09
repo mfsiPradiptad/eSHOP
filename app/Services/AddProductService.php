@@ -26,15 +26,19 @@ class AddProductService
         $msg = '';
 
         if ($id != '') {
-            $product = Product::where('id', $id)->update([
-                'productName' => $data['pName'],
-                'price' => $data['pPrice'],
-                'quantity' => $data['pQuantity'],
-                'description' =>  $data['pDesc'],
-                'image' => $newName,
-            ]);
+            $product = Product::where('id', $id)
+                               ->update([
+                                    'productName' => $data['pName'],
+                                    'price' => $data['pPrice'],
+                                    'quantity' => $data['pQuantity'],
+                                    'description' =>  $data['pDesc'],
+                                    'image' => $newName,
+                                    'intCategory' => $data['selectCat'],
+                                    'intFor' => $data['selectFor'],
+                                ]);
 
             $msg = 'Product updated sucessfully';
+
         } else {
             $product = Product::create([
                 'productName' =>  $data['pName'],
@@ -42,6 +46,8 @@ class AddProductService
                 'quantity' =>  $data['pQuantity'],
                 'description' =>  $data['pDesc'],
                 'image' => $newName,
+                'intCategory' => $data['selectCat'],
+                'intFor' => $data['selectFor'],
             ]);
 
             $id = $product->id;
@@ -71,6 +77,8 @@ class AddProductService
             $product[0]['image'] = '';
             $product[0]['description'] = '';
             $product[0]['productName'] = '';
+            $product[0]['intCategory'] = 0;
+            $product[0]['intFor'] = 0;
             $product[0]['submit'] = 'Add';
         }
 
@@ -245,9 +253,29 @@ class AddProductService
         return $result;
     }
 
-    public function searchProduct(string $strProduct): array
+    public function searchProduct(array $searchFilters): array
     {
-        $rows = $this->productRepository->searchProduct($strProduct);
+        $rows = $this->productRepository->searchProduct($searchFilters);
         return $rows;
+    }
+
+    public function fillAnxure(int $intAnxId, int $value): string
+    {
+        $rows = $this->productRepository->fillAnxure($intAnxId);
+        $html ='<option  value="0"> Select </option>';
+
+        foreach ($rows as $row) {
+
+            if ($row['intAnxId'] == $value) {
+                $selected = 'selected';
+                $html .= '<option value="' . $row['intAnxId'] . '"' . $selected . ' >' . $row['anxValue'] . '</option>';
+
+            } else {
+                $html .= '<option value="' . $row['intAnxId'] . '" >' . $row['anxValue'] . '</option>';
+            }
+
+        }
+
+       return $html;
     }
 }

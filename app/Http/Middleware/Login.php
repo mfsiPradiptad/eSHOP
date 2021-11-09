@@ -26,6 +26,7 @@ class Login
                 return redirect('/productList');
             }
         }
+
         return $next($request);
     }
 }

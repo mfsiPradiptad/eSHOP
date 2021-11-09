@@ -18,8 +18,13 @@ class UserProductController extends Controller
 
     public function index()
     {
+        $searchFilters = array(
+            'productName' => '',
+            'selectCat' => 0,
+            'selectFor' => 0,
+        );
         $result = $this->productService->getAllProduct();
-        return view('user.home', ['data' => $result, 'searchProduct' => '']);
+        return view('user.home', ['data' => $result, 'searchFilters' => $searchFilters]);
     }
 
     public function addToCart(Request $request)
@@ -60,6 +65,7 @@ class UserProductController extends Controller
     {
         $data = (array) $request->all();
         $result = $this->productService->checkOut($data);
+
         return view('user.orderPlace',['data' => $result]);
     }
 
@@ -77,8 +83,15 @@ class UserProductController extends Controller
 
     public function searchProduct(Request $request)
     {
-        $productName = htmlspecialchars($request->searchProduct);
-        $result = $this->productService->searchProduct($productName);
-        return view('user.home', ['data' => $result, 'searchProduct' => $productName]);
+        $selectCat = ($request->selectCat > 0) ? $request->selectCat : 0;
+        $selectFor = ($request->selectFor > 0) ? $request->selectFor : 0;
+        $productName = ($request->searchProduct != '') ? htmlspecialchars($request->searchProduct) : '';
+        $searchFilters = array(
+            'productName' => $productName,
+            'selectCat' => $selectCat,
+            'selectFor' => $selectFor,
+        );
+        $result = $this->productService->searchProduct($searchFilters);
+        return view('user.home', ['data' => $result, 'searchFilters' => $searchFilters]);
     }
 }
